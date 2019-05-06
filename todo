@@ -1,0 +1,12 @@
+Próximos passos:
+
+1) Escolher uma das heurísticas implementadas como ponto de partida para uma solução inicial.
+2) Estudar uma vizinhança para o ATSP.
+3) Implementar heurística busca local na vizinhança escolhida.
+	3.1) Políticas "mais aprimorante" e "primeiro aprimorante".
+	3.2) Recalcular custo do caminho por remoção e inserção de arestas.
+4) Inserir marcação de tempo no algorítmo.
+5) Escrever relatório.
+	5.1) Análise de tempo e custo das soluções.
+	5.2) Comparar a Heurística Construtiva com a Busca Local (políticas mais aprimorante e primeiro aprimorante).
+	5.3) Por pseudo-código no relatório.
