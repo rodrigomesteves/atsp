@@ -6,6 +6,6 @@ Up to now, the Nearest Neighbor Algorithm, the Bi-Directional Nearest Neighbor A
 
 You can compile and execute any of them with the following command line on Linux:
 
-<b>gcc -o <executable_name> <algorithm.c></b> 
+<b>gcc -o <executable_name> <algorithm.c></b> <br>
 <b>./<executable_name></b>
   
