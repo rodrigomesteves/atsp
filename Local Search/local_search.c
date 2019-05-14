@@ -6,6 +6,25 @@
 #include "read_file.c"
 #define INF 0x7F800000
 
+
+void print_header(){
+
+
+	printf("  ____                        _                     _  \n");
+	printf(" |  _ \\                      | |                   | | \n");
+	printf(" | |_) |_   _ ___  ___ __ _  | |     ___   ___ __ _| | \n");
+	printf(" |  _ <| | | / __|/ __/ _` | | |    / _ \\ / __/ _` | | \n");
+	printf(" | |_) | |_| \\__ \\ (_| (_| | | |___| (_) | (_| (_| | | \n");
+	printf(" |____/ \\__,_|___/\\___\\__,_| |______\\___/ \\___\\__,_|_| \n");
+	printf("                                                            \n");
+	printf("            Coded by Rodrigo Marins Esteves                         \n\n\n");
+
+
+
+
+}
+
+
 /*Como não criei uma rotina para ler os arquivos, estou definindo aqui o tamanho da
 matriz e inicializando ela dentro do código*/
 
@@ -60,7 +79,7 @@ int was_element_visited(int elem, int dim, int visited[dim]){
 
 //Essa função printa a solução(caminho) encontrada
 void print_solution(int dim, int sol[dim]){
-  printf("\nSOLUTION: ");
+  printf("\nSolução: ");
   for(int i =0; i<dim; i++){
     printf("%d", sol[i]);
     if(i<dim-1)
@@ -90,6 +109,7 @@ long update_solution_value_1(int current_value, int sub1, int sub2, int sub3, in
 	return current_value+= add1+add2+add3-sub1-sub2-sub3;
 }
 
+//=============================================================================================================================
 
 /*
 Atualiza o valor de uma solução subtraindo o valo das arestas retiradas e inserindo o valor das arestas adicionadas. 
@@ -99,7 +119,7 @@ long update_solution_value_k(int current_value, int sub1, int sub2, int sub3, in
 	return current_value+= add1+add2+add3+add4-sub1-sub2-sub3-sub4;
 }
 
-
+//=============================================================================================================================
 
 //Busca Gulosa (Nearest Neighbor)
 int* greedy_search(int dimention, int m[dimention][dimention]){
@@ -107,7 +127,7 @@ int* greedy_search(int dimention, int m[dimention][dimention]){
    int visited[dimention];
    int * solution = malloc((dimention+1)*sizeof(int));
 
-
+  
   //Inicializa o vetor de visitados com um valor que nunca será usado
   for(int k = 0; k<= dimention; k++){
     visited[k] = INF;
@@ -118,6 +138,7 @@ int* greedy_search(int dimention, int m[dimention][dimention]){
   int next_i = first_i;
   int *current_v = m[next_i];
 
+  printf("\nIniciando a Busca Gulosa\n");
   //Esse FOR realiza um número de iterações igual ao número de nós totais.
   for(int k = 0; k< dimention; k++){
     int shorter = 0x7F800000;
@@ -153,12 +174,86 @@ int* greedy_search(int dimention, int m[dimention][dimention]){
 }
 
 
+//=============================================================================================================================
 
 
+//Realiza a troca das arestas ára o algoritmo 2-opt
+int * two_opt_swap(int dim, int * solution, int i, int k) {
+	int * sol = malloc((dimention+1)*sizeof(int));
+	copy_array(dimention+1,solution, sol);
+	int aux = sol[i+1];
+	sol[i+1] = sol[k];
+	sol[k] = aux;
+	return sol;
+}
 
 
-//Busca local com estratégia melhor aprimorante de busca 
-int* local_search(int dimention, int m[dimention][dimention], int * init_sol, int strategy){
+//=============================================================================================================================
+
+
+//Busca local utilizando a vizinhança 2-opt
+int * two_opt_neighborhood(int dimention, int m[dimention][dimention], int * init_sol, int strategy){
+  //Inicializando arrays com a solução de partida
+   int * new_sol = malloc((dimention+1)*sizeof(int));
+   int * current_sol = malloc((dimention+1)*sizeof(int));
+   copy_array(dimention+1,init_sol, new_sol);
+   copy_array(dimention+1,init_sol, current_sol);
+
+   //Inicializando variáveis com o valor da solução de partida.
+   long current_sol_value = evaluate_solution(dimention, m, init_sol);
+   long new_sol_value = current_sol_value;
+
+	
+   if(strategy == 0)		
+      printf("\nIniciando a Busca Local utilizando o 2-opt para gerar uma vizinhança com estratégia de busca Mais Aprimorante\n");
+   else if(strategy == 1)		
+      printf("\nIniciando a Busca Local utilizando o 2-opt para gerar uma vizinhança com estratégia de busca Primeira Aprimorante\n");
+
+   //Repita enquanto puderem ser encontradas melhores soluções
+   do{
+      current_sol_value = new_sol_value;
+      copy_array(dimention+1,new_sol, current_sol);
+
+      //Flag usada na política de Primeiro Aprimorante.
+      int flag = 0;
+
+      for (int i = 0; i < dimention; i++) {
+         for (int k = i + 1; k < dimention+1; k++) {
+            int * alt_sol = two_opt_swap(dimention,current_sol, i, k);
+
+
+            //Aqui utilizo um novo calculo ao invés de atualizar o valor
+            //Como estou trabalhando com o TSP assimétrico, 
+            //ao religar as arestas pode ocorrer uma mudança na direção 
+            //em que certos nós são percorridos, o que particularmente não consegui tratar.
+            int new_distance = evaluate_solution(dimention, m, alt_sol);
+
+            if (new_distance < current_sol_value) {
+               copy_array(dimention+1,alt_sol, new_sol);
+               new_sol_value = new_distance;
+               //Se a estratégia for Primeiro Aprimorante
+               if(strategy==1){
+                  flag = 1;
+                  break;
+               }
+            }
+            free(alt_sol);
+         }
+         if (flag==1)
+            break;
+      }
+    //printf("new sol: %ld  x  current sol: %ld\n", new_sol_value, current_sol_value);
+   }while(new_sol_value < current_sol_value);
+
+   free(new_sol);
+   return current_sol;
+}
+
+//=============================================================================================================================
+
+
+//Busca local utilizando a vizinhança local escolhida. 
+int * local_neighborhood(int dimention, int m[dimention][dimention], int * init_sol, int strategy){
 
    //Inicializando arrays com a solução de partida
    int * new_sol = malloc((dimention+1)*sizeof(int));
@@ -170,15 +265,14 @@ int* local_search(int dimention, int m[dimention][dimention], int * init_sol, in
    long current_sol_value = evaluate_solution(dimention, m, init_sol);
    long new_sol_value = current_sol_value;
 
-
-
+   if(strategy == 0)		
+      printf("\nIniciando a Busca Local utilizando uma Vizinhança Local com estratégia de busca Mais Aprimorante\n");
+   else if(strategy == 1)		
+      printf("\nIniciando a Busca Local utilizando uma Vizinhança Local com estratégia de busca Primeira Aprimorante\n");
    //Repita enquanto puderem ser encontradas melhores soluções
    do{
 	   current_sol_value = new_sol_value;
 	   copy_array(dimention+1,new_sol, current_sol);
-
-	   int beg = 1;
-	   int end = dimention-1;
 
 	   //Flag usada na política de Primeiro Aprimorante.
            int flag = 0;
@@ -357,18 +451,36 @@ int* local_search(int dimention, int m[dimention][dimention], int * init_sol, in
 
 	   //print_solution(dimention+1,new_sol);
 	   //printf("Melhor Solução:  %ld\n", evaluate_solution(dimention, m, new_sol));   
-     }while(new_sol_value < current_sol_value);
+      }while(new_sol_value < current_sol_value);
  
-
    free(new_sol);
    return current_sol;
+}
+
+
+//=============================================================================================================================
+
+
+//Esta função faz uma triagem da vizinhança e da estratégia escolhida (mais aprimorante ou primeira aprimorante)
+//e depois chama as funções responsáveis por tais processamentos.
+int* local_search(int dimention, int m[dimention][dimention], int * init_sol, int strategy, int neighborhood){
+   if(neighborhood == 0)
+	return local_neighborhood(dimention,m,init_sol,strategy);
+   else if(neighborhood==1)
+	return two_opt_neighborhood(dimention,m,init_sol,strategy);
+   else
+	printf("Vizinhança desconhecida! Utilize 0 para '2-opt' e 1 para 'vizinhança local'. \n");
+   return NULL;
 
 }
 
+//=============================================================================================================================
 
 int main()
 {
 
+
+   print_header();
 //Carregamento do arquivo na estrutura de dados >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
    printf("Digite o nome do arquivo\n");
    scanf("%s", name_of_file);
@@ -388,23 +500,24 @@ int main()
 
 //Resultado da Busca Gulosa >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
    print_solution(dimention+1, sol);
-   printf("\nVALUE OF SOLUTION: %li\n", evaluate_solution(dimention, m, sol));
-   printf("TIME: %f seconds\n", (double)(end - beg) / CLOCKS_PER_SEC);
+   printf("\nCusto da solução encontrada: %li\n", evaluate_solution(dimention, m, sol));
+   printf("Tempo decorrido: %f seconds\n", (double)(end - beg) / CLOCKS_PER_SEC);
 //<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
 //Executando Busca Local >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
    beg = clock();
    // Best Improving Strategy: 0,  First Improving Strategy: 1
-   sol = local_search(dimention, m, sol, 0);
+   // Local Neighborhood: 0,  2-opt Neighborhood: 1
+   sol = local_search(dimention, m, sol, 0, 1);
    end = clock();   
 //<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
 //Resultado da Busca Local >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
    print_solution(dimention+1, sol);
-   printf("\nVALUE OF SOLUTION: %li\n", evaluate_solution(dimention, m, sol));
-   printf("TIME: %f seconds\n", (double)(end - beg) / CLOCKS_PER_SEC);
+   printf("\nCusto da solução encontrada: %li\n", evaluate_solution(dimention, m, sol));
+   printf("Tempo decorrido: %f seconds\n", (double)(end - beg) / CLOCKS_PER_SEC);
 //<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
    return 0;
