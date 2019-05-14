@@ -482,7 +482,7 @@ int main()
 
    print_header();
 //Carregamento do arquivo na estrutura de dados >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-   printf("Digite o nome do arquivo\n");
+   printf("Digite o nome do arquivo: ");
    scanf("%s", name_of_file);
 
    dimention = get_dimention(name_of_file);
@@ -490,36 +490,118 @@ int main()
    file_to_matrix(name_of_file, dimention, m);
 //<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
+   int * sol;
+   clock_t beg;
+   clock_t end;
+   double greedy;
+   char option[2];
 
-//Executando a Busca Gulosa >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-   clock_t beg = clock();
-   int * sol = greedy_search(dimention, m);
-   clock_t end = clock();   
-//<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+   //Executando a Busca Gulosa >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
-
-//Resultado da Busca Gulosa >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-   print_solution(dimention+1, sol);
-   printf("\nCusto da solução encontrada: %li\n", evaluate_solution(dimention, m, sol));
-   printf("Tempo decorrido: %f seconds\n", (double)(end - beg) / CLOCKS_PER_SEC);
-//<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-
-
-//Executando Busca Local >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
    beg = clock();
-   // Best Improving Strategy: 0,  First Improving Strategy: 1
-   // Local Neighborhood: 0,  2-opt Neighborhood: 1
-   sol = local_search(dimention, m, sol, 0, 1);
-   end = clock();   
-//<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+   sol = greedy_search(dimention, m);
+   end = clock();  
+   greedy = (double)(end - beg) / CLOCKS_PER_SEC;
+   //<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
-//Resultado da Busca Local >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+   //Resultado da Busca Gulosa >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
    print_solution(dimention+1, sol);
    printf("\nCusto da solução encontrada: %li\n", evaluate_solution(dimention, m, sol));
-   printf("Tempo decorrido: %f seconds\n", (double)(end - beg) / CLOCKS_PER_SEC);
-//<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+   printf("Tempo decorrido: %f seconds\n", greedy);
+   //<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
+
+
+   option [0] = ' ';
+   printf("\n\nDeseja executar a Busca Local utilizando o 2-opt para gerar uma vizinhança com estratégia de busca Mais Aprimorante? (y/n): ");
+   scanf("%s", &option);
+
+   //Executando Busca Local >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+   if(option[0] == 'y'){
+	beg = clock();
+	// Best Improving Strategy: 0,  First Improving Strategy: 1
+	// Local Neighborhood: 0,  2-opt Neighborhood: 1
+	sol = local_search(dimention, m, sol, 0, 1);
+	end = clock();   
+	//<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+	//Resultado da Busca Local >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+	print_solution(dimention+1, sol);
+	printf("\nCusto da solução encontrada: %li\n", evaluate_solution(dimention, m, sol));
+	printf("Tempo decorrido: %f seconds\n", (double)(end - beg) / CLOCKS_PER_SEC);
+	printf("Tempo total decorrido (Busca Gulosa + Busca local): %f seconds\n", (double)(end - beg) / CLOCKS_PER_SEC + greedy);
+	//<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+}
+
+
+   option [0] = ' ';
+   printf("\n\nDeseja executar a Busca Local utilizando o 2-opt para gerar uma vizinhança com estratégia de busca Primeira Aprimorante? (y/n): ");
+   scanf("%s", &option);
+
+   //Executando Busca Local >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+   if(option[0] == 'y'){
+	beg = clock();
+	// Best Improving Strategy: 0,  First Improving Strategy: 1
+	// Local Neighborhood: 0,  2-opt Neighborhood: 1
+	sol = local_search(dimention, m, sol, 1, 1);
+	end = clock();   
+	//<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+	//Resultado da Busca Local >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+	print_solution(dimention+1, sol);
+	printf("\nCusto da solução encontrada: %li\n", evaluate_solution(dimention, m, sol));
+	printf("Tempo decorrido: %f seconds\n", (double)(end - beg) / CLOCKS_PER_SEC);
+	printf("Tempo total decorrido (Busca Gulosa + Busca local): %f seconds\n", (double)(end - beg) / CLOCKS_PER_SEC + greedy);
+	//<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+}
+
+   option [0] = ' ';
+   printf("\n\nDeseja executar a Busca Local utilizando uma vizinhança local com estratégia de busca Mais Aprimorante? (y/n): ");
+   scanf("%s", &option);
+
+   //Executando Busca Local >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+   if(option[0] == 'y'){
+	beg = clock();
+	// Best Improving Strategy: 0,  First Improving Strategy: 1
+	// Local Neighborhood: 0,  2-opt Neighborhood: 1
+	sol = local_search(dimention, m, sol, 0, 0);
+	end = clock();   
+	//<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+	//Resultado da Busca Local >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+	print_solution(dimention+1, sol);
+	printf("\nCusto da solução encontrada: %li\n", evaluate_solution(dimention, m, sol));
+	printf("Tempo decorrido: %f seconds\n", (double)(end - beg) / CLOCKS_PER_SEC);
+	printf("Tempo total decorrido (Busca Gulosa + Busca local): %f seconds\n", (double)(end - beg) / CLOCKS_PER_SEC + greedy);
+	//<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+}
+
+   option [0] = ' ';
+   printf("\n\nDeseja executar a Busca Local utilizando uma vizinhança local com estratégia de busca Primeira Aprimorante? (y/n): ");
+   scanf("%s", &option);
+
+   //Executando Busca Local >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+   if(option[0] == 'y'){
+	beg = clock();
+	// Best Improving Strategy: 0,  First Improving Strategy: 1
+	// Local Neighborhood: 0,  2-opt Neighborhood: 1
+	sol = local_search(dimention, m, sol, 1, 0);
+	end = clock();   
+	//<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+	//Resultado da Busca Local >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+	print_solution(dimention+1, sol);
+	printf("\nCusto da solução encontrada: %li\n", evaluate_solution(dimention, m, sol));
+	printf("Tempo decorrido: %f seconds\n", (double)(end - beg) / CLOCKS_PER_SEC);
+	printf("Tempo total decorrido (Busca Gulosa + Busca local): %f seconds\n", (double)(end - beg) / CLOCKS_PER_SEC + greedy);
+	//<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+}
+   printf("\n\n");
    return 0;
 }
 
