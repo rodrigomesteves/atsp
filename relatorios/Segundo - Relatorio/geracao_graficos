@@ -1,0 +1,115 @@
+set datafile separator whitespace
+set grid
+set title 'Dimensao x Tempo'
+set yrange [0:90]
+set xrange [20:800]
+set xlabel 'dimensao'
+plot '/home/rodrigo/Documentos/UFF/relatorios/dimxtempo.dat' u 1:2 w lp t 'Busca Gulosa' lw 2.5, '/home/rodrigo/Documentos/UFF/relatorios/dimxtempo.dat' u 1:3 w lp t 'Busca Local Melhor Aprimorante' lw 2.5, '/home/rodrigo/Documentos/UFF/relatorios/dimxtempo.dat' u 1:4 w lp t 'Busca Local Primeiro Aprimorante (2opt)' lw 2.5, '/home/rodrigo/Documentos/UFF/relatorios/dimxtempo.dat' u 1:5 w lp t 'Busca Local Melhor Aprimorante (Vizinhanca Local)' lw 2.5, '/home/rodrigo/Documentos/UFF/relatorios/dimxtempo.dat' u 1:6 w lp t 'Busca Local Primeiro Aprimorante (Vizinhanca Local)' lw 2.5
+
+
+
+
+
+
+red = "#FF0000"; green = "#00FF00"; blue = "#0000FF"; skyblue = "#87CEEB";
+set yrange [0:44000]
+set logscale 10 y
+set style data histogram
+set style histogram cluster gap 1
+set style fill solid
+set boxwidth 0.9
+set xtics format ""
+set grid ytics
+
+set title "Problemas x Resultados"
+plot "/home/rodrigo/Documentos/UFF/relatorios/2opt-ma.dat" using 2:xtic(1) title "Otimo" ls 2 linecolor rgb skyblue, \
+            '' using 4 title "Opt-2" ls 2 linecolor rgb red, \
+            '' using 3 title "Guloso" ls 2 linecolor rgb green
+
+
+
+
+
+red = "#FF0000"; green = "#00FF00"; blue = "#0000FF"; skyblue = "#87CEEB";
+set yrange [0:44000]
+set logscale 10 y
+set style data histogram
+set style histogram cluster gap 1
+set style fill solid
+set boxwidth 0.9
+set xtics format ""
+set grid ytics
+
+set title "Problemas x Resultados"
+plot "/home/rodrigo/Documentos/UFF/relatorios/2opt-pa.dat" using 2:xtic(1) title "Otimo" ls 2 linecolor rgb skyblue, \
+            '' using 4 title "Opt-2" ls 2 linecolor rgb red, \
+            '' using 3 title "Guloso" ls 2 linecolor rgb green
+
+
+
+
+
+red = "#FF0000"; green = "#00FF00"; blue = "#0000FF"; skyblue = "#87CEEB";
+set yrange [0:44000]
+set logscale 10 y
+set style data histogram
+set style histogram cluster gap 1
+set style fill solid
+set boxwidth 0.9
+set xtics format ""
+set grid ytics
+
+set title "Problemas x Resultados"
+plot "/home/rodrigo/Documentos/UFF/relatorios/vizlocal-ma.dat" using 2:xtic(1) title "Otimo" ls 2 linecolor rgb skyblue, \
+            '' using 4 title "Opt-2" ls 2 linecolor rgb red, \
+            '' using 3 title "Guloso" ls 2 linecolor rgb green
+
+
+
+
+
+red = "#FF0000"; green = "#00FF00"; blue = "#0000FF"; skyblue = "#87CEEB";
+set yrange [0:44000]
+set logscale 10 y
+set style data histogram
+set style histogram cluster gap 1
+set style fill solid
+set boxwidth 0.9
+set xtics format ""
+set grid ytics
+
+set title "Problemas x Resultados"
+plot "/home/rodrigo/Documentos/UFF/relatorios/vizlocal-pa.dat" using 2:xtic(1) title "Otimo" ls 2 linecolor rgb skyblue, \
+            '' using 4 title "Opt-2" ls 2 linecolor rgb red, \
+            '' using 3 title "Guloso" ls 2 linecolor rgb green
+
+
+
+
+
+
+red = "#FF0000"; green = "#00FF00"; blue = "#0000FF"; skyblue = "#87CEEB"; yellow = "#FFFF00"; brown = "#8B4513"; pink = "#FF69B4";
+set yrange [0:4000]
+set xrange [-1:10]
+set style data histogram
+set style histogram cluster gap 1
+set style fill solid
+set boxwidth 0.9
+set xtics format ""
+set grid ytics
+
+set title "Problemas x Resultados"
+plot "/home/rodrigo/Documentos/UFF/relatorios/custo-all.dat" using 2:xtic(1) title "Otimo" ls 2 linecolor rgb skyblue, \
+            '' using 4 title "Opt-2 MA" ls 2 linecolor rgb red, \
+            '' using 5 title "Opt-2 PA" ls 2 linecolor rgb yellow, \
+            '' using 6 title "Local Neighborhood MA" ls 2 linecolor rgb brown, \
+            '' using 7 title "Local Neighborhood PA" ls 2 linecolor rgb pink, \
+            '' using 3 title "Guloso" ls 2 linecolor rgb green
+
+
+
+
+
+
+
+
