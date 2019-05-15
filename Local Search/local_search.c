@@ -92,7 +92,7 @@ void print_solution(int dim, int sol[dim]){
 //Essa é a FUNÇÃO OBJETIVO
 long evaluate_solution(int dim, int m[dim][dim], int sol[dimention+1]){
    long value = 0;
-   for(int i=0; i<=dim; i++){
+   for(int i=0; i<dim; i++){
       int x = sol[i];
       int y = sol[i+1];
       value += m[x][y];
@@ -217,8 +217,8 @@ int * two_opt_neighborhood(int dimention, int m[dimention][dimention], int * ini
       //Flag usada na política de Primeiro Aprimorante.
       int flag = 0;
 
-      for (int i = 0; i < dimention; i++) {
-         for (int k = i + 1; k < dimention+1; k++) {
+      for (int i = 1; i < dimention-1; i++) {
+         for (int k = i + 1; k < dimention; k++) {
             int * alt_sol = two_opt_swap(dimention,current_sol, i, k);
 
 
@@ -287,7 +287,7 @@ int * local_neighborhood(int dimention, int m[dimention][dimention], int * init_
 	Permuta nós adjacentes na solução. Por exemplo:
 	Se a solução for ABCDEF, esse for testará sequencias como ACBDEF, ABDCEF, ABCEDF, etc..
 	*/
-	   for(int i = 1; i<dimention; i++){
+	   for(int i = 1; i<dimention-1; i++){
 
 		int * alt_sol = malloc((dimention+1)*sizeof(int));
 		copy_array(dimention+1,current_sol, alt_sol);
@@ -322,7 +322,7 @@ int * local_neighborhood(int dimention, int m[dimention][dimention], int * init_
 	Permuta nós separados por um nó na solução. Por exemplo:
 	Se a solução for ABCDEF, esse for testará sequencias como CBADEF, ADCBEF, ABEDCF, etc..
 	*/
-	   for(int i = 1; i<dimention-1; i++){
+	   for(int i = 1; i<dimention-2; i++){
 
 		int * alt_sol = malloc((dimention+1)*sizeof(int));
 		copy_array(dimention+1,current_sol, alt_sol);
@@ -355,7 +355,7 @@ int * local_neighborhood(int dimention, int m[dimention][dimention], int * init_
 	Permuta nós separados por dois nós na solução. Por exemplo:
 	Se a solução for ABCDEF, esse for testará sequencias como DBCAEF, AECDBF, ABFDEC, etc..
 	*/
-	   for(int i = 1; i<dimention-2; i++){
+	   for(int i = 1; i<dimention-3; i++){
 
 		int * alt_sol = malloc((dimention+1)*sizeof(int));
 		copy_array(dimention+1,current_sol, alt_sol);
@@ -388,7 +388,7 @@ int * local_neighborhood(int dimention, int m[dimention][dimention], int * init_
 	Permuta nós separados por três nós na solução. Por exemplo:
 	Se a solução for ABCDEF, esse for testará sequencias como DBCAEF, AECDBF, ABFDEC, etc..
 	*/
-	   for(int i = 1; i<dimention-3; i++){
+	   for(int i = 1; i<dimention-4; i++){
 
 		int * alt_sol = malloc((dimention+1)*sizeof(int));
 		copy_array(dimention+1,current_sol, alt_sol);
@@ -421,7 +421,7 @@ int * local_neighborhood(int dimention, int m[dimention][dimention], int * init_
 	Permuta nós separados por quatro nós na solução. Por exemplo:
 	Se a solução for ABCDEF, esse for testará sequencias como DBCAEF, AECDBF, ABFDEC, etc..
 	*/
-	   for(int i = 1; i<dimention-4; i++){
+	   for(int i = 1; i<dimention-5; i++){
 
 		int * alt_sol = malloc((dimention+1)*sizeof(int));
 		copy_array(dimention+1,current_sol, alt_sol);
@@ -481,20 +481,23 @@ int main()
 
 
    print_header();
-//Carregamento do arquivo na estrutura de dados >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+   //Carregamento do arquivo na estrutura de dados >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
    printf("Digite o nome do arquivo: ");
    scanf("%s", name_of_file);
 
    dimention = get_dimention(name_of_file);
    int m[dimention][dimention];
    file_to_matrix(name_of_file, dimention, m);
-//<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+   //<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
    int * sol;
    clock_t beg;
    clock_t end;
    double greedy;
    char option[2];
+
+   long v1,v2,v3,v4,v5;
+   double t2,t3,t4,t5;
 
    //Executando a Busca Gulosa >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
@@ -506,8 +509,9 @@ int main()
 
 
    //Resultado da Busca Gulosa >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+   v1 = evaluate_solution(dimention, m, sol);
    print_solution(dimention+1, sol);
-   printf("\nCusto da solução encontrada: %li\n", evaluate_solution(dimention, m, sol));
+   printf("\nCusto da solução encontrada: %li\n", v1);
    printf("Tempo decorrido: %f seconds\n", greedy);
    //<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -522,18 +526,22 @@ int main()
 	beg = clock();
 	// Best Improving Strategy: 0,  First Improving Strategy: 1
 	// Local Neighborhood: 0,  2-opt Neighborhood: 1
-	sol = local_search(dimention, m, sol, 0, 1);
+	int * l_sol = local_search(dimention, m, sol, 0, 1);
 	end = clock();   
 	//<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
-
+	
 	//Resultado da Busca Local >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-	print_solution(dimention+1, sol);
-	printf("\nCusto da solução encontrada: %li\n", evaluate_solution(dimention, m, sol));
-	printf("Tempo decorrido: %f seconds\n", (double)(end - beg) / CLOCKS_PER_SEC);
+	v2 = evaluate_solution(dimention, m, l_sol);
+	t2 = (double)(end - beg) / CLOCKS_PER_SEC;
+
+	print_solution(dimention+1, l_sol);
+	printf("\nCusto da solução encontrada: %li\n", v2);
+	printf("Tempo decorrido: %f seconds\n", t2);
 	printf("Tempo total decorrido (Busca Gulosa + Busca local): %f seconds\n", (double)(end - beg) / CLOCKS_PER_SEC + greedy);
 	//<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-}
+        free(l_sol);
+   }
 
 
    option [0] = ' ';
@@ -545,17 +553,21 @@ int main()
 	beg = clock();
 	// Best Improving Strategy: 0,  First Improving Strategy: 1
 	// Local Neighborhood: 0,  2-opt Neighborhood: 1
-	sol = local_search(dimention, m, sol, 1, 1);
+	int * l_sol = local_search(dimention, m, sol, 1, 1);
 	end = clock();   
 	//<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
 	//Resultado da Busca Local >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-	print_solution(dimention+1, sol);
-	printf("\nCusto da solução encontrada: %li\n", evaluate_solution(dimention, m, sol));
-	printf("Tempo decorrido: %f seconds\n", (double)(end - beg) / CLOCKS_PER_SEC);
+	t3 = (double)(end - beg) / CLOCKS_PER_SEC;
+	v3 = evaluate_solution(dimention, m, l_sol);
+
+	print_solution(dimention+1, l_sol);
+	printf("\nCusto da solução encontrada: %li\n", v3);
+	printf("Tempo decorrido: %f seconds\n", t3);
 	printf("Tempo total decorrido (Busca Gulosa + Busca local): %f seconds\n", (double)(end - beg) / CLOCKS_PER_SEC + greedy);
 	//<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+	free(l_sol);
 }
 
    option [0] = ' ';
@@ -567,17 +579,21 @@ int main()
 	beg = clock();
 	// Best Improving Strategy: 0,  First Improving Strategy: 1
 	// Local Neighborhood: 0,  2-opt Neighborhood: 1
-	sol = local_search(dimention, m, sol, 0, 0);
+	int * l_sol = local_search(dimention, m, sol, 0, 0);
 	end = clock();   
 	//<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
 	//Resultado da Busca Local >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-	print_solution(dimention+1, sol);
-	printf("\nCusto da solução encontrada: %li\n", evaluate_solution(dimention, m, sol));
-	printf("Tempo decorrido: %f seconds\n", (double)(end - beg) / CLOCKS_PER_SEC);
+	v4 = evaluate_solution(dimention, m, l_sol);
+	t4 = (double)(end - beg) / CLOCKS_PER_SEC;
+
+	print_solution(dimention+1, l_sol);
+	printf("\nCusto da solução encontrada: %li\n", v4);
+	printf("Tempo decorrido: %f seconds\n", t4);
 	printf("Tempo total decorrido (Busca Gulosa + Busca local): %f seconds\n", (double)(end - beg) / CLOCKS_PER_SEC + greedy);
 	//<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+	free(l_sol);
 }
 
    option [0] = ' ';
@@ -589,19 +605,24 @@ int main()
 	beg = clock();
 	// Best Improving Strategy: 0,  First Improving Strategy: 1
 	// Local Neighborhood: 0,  2-opt Neighborhood: 1
-	sol = local_search(dimention, m, sol, 1, 0);
+	int * l_sol = local_search(dimention, m, sol, 1, 0);
 	end = clock();   
 	//<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
 	//Resultado da Busca Local >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-	print_solution(dimention+1, sol);
-	printf("\nCusto da solução encontrada: %li\n", evaluate_solution(dimention, m, sol));
-	printf("Tempo decorrido: %f seconds\n", (double)(end - beg) / CLOCKS_PER_SEC);
-	printf("Tempo total decorrido (Busca Gulosa + Busca local): %f seconds\n", (double)(end - beg) / CLOCKS_PER_SEC + greedy);
+	v5 = evaluate_solution(dimention, m, l_sol);
+	t5 = (double)(end - beg) / CLOCKS_PER_SEC;
+
+	print_solution(dimention+1, l_sol);
+	printf("\nCusto da solução encontrada: %li\n", v5);
+	printf("Tempo decorrido: %f seconds\n", t5);
+	printf("Tempo total decorrido (Busca Gulosa + Busca local): %f seconds\n\n", (double)(end - beg) / CLOCKS_PER_SEC + greedy);
 	//<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-}
-   printf("\n\n");
+	free(l_sol);
+   }
+   free(sol);
+   printf("Resultado: %f\t%ld\t%f\t%ld\t%f\t%ld\t%f\t%ld\t%f\t%ld\n\n", greedy,v1,t2,v2,t3,v3,t4,v4,t5,v5);
    return 0;
 }
 
