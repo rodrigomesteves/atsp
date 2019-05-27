@@ -182,13 +182,13 @@ int* greedy_search(int dimention, int m[dimention][dimention]){
 //Busca Semi-Gulosa (Nearest Neighbor)
 int* semigreedy_search(int dimention, int m[dimention][dimention]){
 
-  int visited[dimention];
+  int * visited = malloc((dimention)*sizeof(int));
   int n_visited = 0;
   int * solution = malloc((dimention+1)*sizeof(int));
 
   //Inicializa o vetor de visitados com um valor que nunca será usado
   for(int k = 0; k< dimention; k++){
-    visited[k] = INF;
+    visited[k] = 0;
   }
 
   int shorter = INF;
@@ -221,10 +221,10 @@ int* semigreedy_search(int dimention, int m[dimention][dimention]){
       solution[k] = next_i;
 
       for(int i = 0; i < dimention; i++){
-        if(current_v[i] < shorter && current_i!=i && !was_element_visited(i, dimention, visited)){
+        if(current_v[i] < shorter && current_i!=i && visited[i]==0){
           shorter = current_v[i];
         }
-        if(current_v[i] > greater && current_i!=i && !was_element_visited(i, dimention, visited)){
+        if(current_v[i] > greater && current_i!=i && visited[i]==0){
           greater = current_v[i];
         }
       }
@@ -233,7 +233,7 @@ int* semigreedy_search(int dimention, int m[dimention][dimention]){
 
       //Seleciona os nós candidatos baseado no limite calculado anteriormente
       for(int i = 0; i < dimention; i++){
-        if(current_v[i] <= upper_limit && current_i!=i && !was_element_visited(i, dimention, visited)){
+        if(current_v[i] <= upper_limit && current_i!=i && visited[i]==0){
           candidates[n_candidates] = i;
           n_candidates++;
         }
@@ -250,12 +250,13 @@ int* semigreedy_search(int dimention, int m[dimention][dimention]){
       //printf("\nIteração %d    Escolhido %d    Existem %i candidatos",k, choosen, n_candidates);
       free(candidates);
     }
-    insert_into_visited(current_i, dimention, visited);
+    visited[current_i] = 1;
     n_visited++;
     //printf("De %i para %i com custo %i\n",current_i,next_i, shorter);
     //print_visited();
   }
 
+  free(visited);
   n_visited = 0;
   return solution;
 }
@@ -565,7 +566,41 @@ int* local_search(int dimention, int m[dimention][dimention], int * init_sol, in
 
 }
 
+
+int* grasp(int dimention, int m[dimention][dimention], int strategy, int its){
+
+
+  //double media = 0;
+  double menor = INF;
+  //int index = 0;
+
+  int * bestSolution = malloc((dimention+1)*sizeof(int));
+  for(int a=0; a<its; a++){
+	int * sol = semigreedy_search(dimention, m);
+	int * l_sol;
+	if(strategy == 1)
+		l_sol = local_search(dimention, m, sol, 0, 1);
+	else if(strategy == 2)
+		l_sol = local_search(dimention, m, sol, 1, 1);
+	double newValue = evaluate_solution(dimention, m, l_sol);
+	if(newValue < menor){
+		menor = newValue;
+		copy_array(dimention+1,l_sol, bestSolution);
+	}
+	//media +=newValue;
+	free (sol);
+	free (l_sol);
+        //printf("%s,%f,%f,%f,%f\n", name_of_file, alpha, menor, media/index, (double)(clock() - c_beg)/CLOCKS_PER_SEC);
+	//index++;
+   }
+   return bestSolution;
+
+
+}
+
 //=============================================================================================================================
+
+
 
 int main()
 {
@@ -581,69 +616,35 @@ int main()
    file_to_matrix(name_of_file, dimention, m);
    //<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
-   //int *sol, *l_sol;
-   clock_t beg;
-   clock_t end;
-   clock_t c_beg;
-   clock_t c_end;
-   double greedy;
-   char option[2];
+
    sgenrand(1337); //Gerador de números aleatorios Mersenne Twister
-   long v1,v2,v3,v4,v5;
-   double t2,t3,t4,t5;
 
-   printf("Calculando soluções...\n");
+
+
+   int st = 0;
+   int its = -1;
+   while(st != 1 && st != 2){
+	   printf("\nDigite 1 para estratégia Mais Aprimorante ou 2 para estratégia Primeira Aprimorante: ");
+	   scanf("%d", &st);
+   }
+   while(its<1){
+	   printf("\nDigite a quantidade de iterações que deseja realizar: ");
+	   scanf("%d", &its);
+   }
+
+   printf("\nCalculando soluções...\n");
    
-   //Rodando com o primeiro alpha para obter o tempo ####################################
-   beg = clock();
-   double media = 0;
-   double menor = INF;
-   int * bestSolution = malloc((dimention+1)*sizeof(int));
 
-   for(int a=0; a<1000; a++){
-	int * sol = semigreedy_search(dimention, m);
-	int * l_sol = local_search(dimention, m, sol, 0, 1);
-	v2 = evaluate_solution(dimention, m, l_sol);
-	if(v2 < menor){
-		menor = v2;
-		copy_array(dimention+1,l_sol, bestSolution);
-	}
-	media +=v2;
-	//printf("Solução: %ld\n", v2);
-	//printf("..\n");
-	free (sol);
-	free (l_sol);
-   }
+   clock_t beg = clock();
+
+   int * bestSolution = grasp(dimention, m, st, its);
+
+   clock_t end = clock();
+
+   printf("Melhor solução: %ld  Tempo: %f\n", evaluate_solution(dimention, m, bestSolution),(double)(end - beg)/CLOCKS_PER_SEC);
+   print_solution(dimention+1, bestSolution);
    free(bestSolution);
-   end = clock();  
-   //####################################################################################
 
-
-   while(alpha<1){
-
-   media = 0;
-   menor = INF;
-   int * bestSolution = malloc((dimention+1)*sizeof(int));
-   c_beg = clock();
-   int index = 1;
-
-   while((double)(clock() - c_beg) / CLOCKS_PER_SEC  < (double)(end - beg) / CLOCKS_PER_SEC){
-	int * sol = semigreedy_search(dimention, m);
-	int * l_sol = local_search(dimention, m, sol, 0, 1);
-	v2 = evaluate_solution(dimention, m, l_sol);
-	if(v2 < menor){
-		menor = v2;
-		copy_array(dimention+1,l_sol, bestSolution);
-	}
-	media +=v2;
-	free (sol);
-	free (l_sol);
-        printf("%s,%f,%f,%f,%f\n", name_of_file, alpha, menor, media/index, (double)(clock() - c_beg)/CLOCKS_PER_SEC);
-	index++;
-   }
-   free(bestSolution);
-   alpha += 0.1;
-  }
    return 0;
 }
 
