@@ -1,0 +1,9 @@
+		set xlabel 'exponential quantiles'
+		set size ratio 1
+		set ylabel 'measured times'
+		set key right bottom
+		set title 'ftv70_2600_grasp'
+		set terminal postscript color 'Helvetica' 
+		set output 'ftv70_2600_grasp-qq.ps'
+		plot "ftv70_2600_grasp-el.dat" t "empirical" w points, "ftv70_2600_grasp-tl.dat" t "estimated" with lines 3, "ftv70_2600_grasp-ul.dat" t "+1 std dev range" w lines 4, "ftv70_2600_grasp-ll.dat" t "-1 std dev range" w lines 4 
+		quit

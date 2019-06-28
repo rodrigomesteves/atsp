@@ -1,0 +1,9 @@
+		set xlabel 'exponential quantiles'
+		set size ratio 1
+		set ylabel 'measured times'
+		set key right bottom
+		set title 'rbg323_3000_grasp'
+		set terminal postscript color 'Helvetica' 
+		set output 'rbg323_3000_grasp-qq.ps'
+		plot "rbg323_3000_grasp-el.dat" t "empirical" w points, "rbg323_3000_grasp-tl.dat" t "estimated" with lines 3, "rbg323_3000_grasp-ul.dat" t "+1 std dev range" w lines 4, "rbg323_3000_grasp-ll.dat" t "-1 std dev range" w lines 4 
+		quit

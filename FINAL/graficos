@@ -1,0 +1,30 @@
+gnuplot -e "set terminal png size 1200,800; set output 'ftv35.png';set datafile separator comma;
+set title 'Tempo x Melhor resultado';
+set xlabel 'tempo (s)';
+set ylabel 'valor da solucao';
+plot '/home/rodrigo/Documentos/UFF/Metaheuristicas/atsp/GRASP/ftv35.dat' u 1:2 w lp t 'GRASP', '/home/rodrigo/Documentos/UFF/Metaheuristicas/atsp/FINAL/ftv35.dat' u 1:2 w lp t 'Elitist Genetic'"
+
+
+
+gnuplot -e "set terminal png size 1200,800; set output 'ftv64.png';set datafile separator comma;
+set title 'Tempo x Melhor resultado';
+set xlabel 'tempo (s)';
+set ylabel 'valor da solucao';
+plot '/home/rodrigo/Documentos/UFF/Metaheuristicas/atsp/GRASP/ftv64.dat' u 1:2 w lp t 'GRASP', '/home/rodrigo/Documentos/UFF/Metaheuristicas/atsp/FINAL/ftv64.dat' u 1:2 w lp t 'Elitist Genetic'"
+
+
+
+gnuplot -e "set terminal png size 1200,800; set output 'ftv70.png';set datafile separator comma;
+set title 'Tempo x Melhor resultado';
+set xlabel 'tempo (s)';
+set ylabel 'valor da solucao';
+plot '/home/rodrigo/Documentos/UFF/Metaheuristicas/atsp/GRASP/ftv70.dat' u 1:2 w lp t 'GRASP', '/home/rodrigo/Documentos/UFF/Metaheuristicas/atsp/FINAL/ftv70.dat' u 1:2 w lp t 'Elitist Genetic'"
+
+
+gnuplot -e "set terminal png size 1200,800; set output 'probability_p43.png';set datafile separator whitespace;
+set title 'Tempo x Probabilidade';
+set key right bottom;
+set yrange [0:0.97];
+set xlabel 'tempo (s)';
+set ylabel 'probabilidade';
+plot '/home/rodrigo/Documentos/UFF/Metaheuristicas/atsp/GRASP/p43-ee.dat' u 1:2 w lp t 'GRASP', '/home/rodrigo/Documentos/UFF/Metaheuristicas/atsp/FINAL/p43-ee.dat' u 1:2 w lp t 'Elitist Genetic'"
