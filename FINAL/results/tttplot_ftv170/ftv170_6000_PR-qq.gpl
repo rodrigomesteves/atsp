@@ -1,9 +1,0 @@
-		set xlabel 'exponential quantiles'
-		set size ratio 1
-		set ylabel 'measured times'
-		set key right bottom
-		set title 'ftv170_6000_PR'
-		set terminal postscript color 'Helvetica' 
-		set output 'ftv170_6000_PR-qq.ps'
-		plot "ftv170_6000_PR-el.dat" t "empirical" w points, "ftv170_6000_PR-tl.dat" t "estimated" with lines 3, "ftv170_6000_PR-ul.dat" t "+1 std dev range" w lines 4, "ftv170_6000_PR-ll.dat" t "-1 std dev range" w lines 4 
-		quit
